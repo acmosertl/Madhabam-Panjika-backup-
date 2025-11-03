@@ -1,62 +1,149 @@
-<div id="madhabam-panel" style="font-family:'Noto Sans Bengali',sans-serif;background:#fff1d6;padding:10px;border-radius:16px;max-width:360px;margin:auto;">
-  <!-- 🪔 পঞ্জিকা কার্ড -->
-  <div style="background:linear-gradient(to bottom,#fef08a,#fde047);border-radius:16px;padding:10px;margin-bottom:8px;text-align:center;">
-    <h3>🪔 পঞ্জিকা</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
-      <div>তিথি<br><b id="tithi">-</b></div>
-      <div>নক্ষত্র<br><b id="nakshatra">-</b></div>
-      <div>সূর্যোদয়<br><b id="sunrise">-</b></div>
-      <div>সূর্যাস্ত<br><b id="sunset">-</b></div>
-      <div>চন্দ্রোদয়<br><b id="moonrise">-</b></div>
-      <div>চন্দ্রাস্ত<br><b id="moonset">-</b></div>
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>মাধবম পঞ্জিকা</title>
+<style>
+  body {
+    font-family: "Noto Sans Bengali", sans-serif;
+    background: #fff1d6;
+    margin: 0;
+    padding: 20px;
+  }
+  .panel {
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .panchika {
+    background: linear-gradient(to bottom, #ffe97a, #ffd740);
+    text-align: center;
+  }
+  .panchika h2 { color: #663300; margin: 6px 0 10px; font-size: 1.3em; }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .cell {
+    background: #ff9ee7;
+    border-radius: 10px;
+    padding: 6px;
+    font-size: 1em;
+  }
+  .label {
+    color: #fff;
+    text-shadow: 0 0 4px #000;
+    display: block;
+  }
+  .value { font-weight: bold; color: #000; }
+  .ekadashi {
+    background: #d32f2f;
+    color: #fff;
+    text-align: center;
+    font-size: 1.1em;
+  }
+  .ekadashi h3 { margin: 0 0 8px; }
+  .festival {
+    background: #fff59d;
+    color: #b71c1c;
+    text-align: center;
+    font-size: 1.05em;
+  }
+  .tide {
+    background: linear-gradient(to bottom, #1e3a8a, #0d1b4c);
+    color: #fff;
+  }
+  .tide h3 { text-align:center; margin:4px 0 8px;}
+  .tide-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .tide-cell {
+    background: rgba(255,255,255,0.15);
+    padding:6px;
+    border-radius:10px;
+  }
+  .icon {
+    text-shadow: 0 0 6px rgba(255,255,255,0.8);
+    font-size:1.3em;
+  }
+  .popup-trigger {
+    background:#FFF8E1;
+    color:#7B1FA2;
+    text-align:center;
+    border-radius:12px;
+    padding:10px;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:0 2px 6px rgba(0,0,0,0.2);
+  }
+  .popup-trigger:hover {
+    box-shadow:0 0 10px rgba(123,31,162,0.5);
+  }
+</style>
+</head>
+<body>
+  <div class="panel panchika">
+    <h2>🪔 পঞ্জিকা</h2>
+    <div class="grid">
+      <div class="cell"><span class="label">তিথি</span><span id="tithi" class="value">-</span></div>
+      <div class="cell"><span class="label">নক্ষত্র</span><span id="nakshatra" class="value">-</span></div>
+      <div class="cell"><span class="label">সূর্যোদয়</span><span id="sunrise" class="value">-</span></div>
+      <div class="cell"><span class="label">সূর্যাস্ত</span><span id="sunset" class="value">-</span></div>
+      <div class="cell"><span class="label">চন্দ্রোদয়</span><span id="moonrise" class="value">-</span></div>
+      <div class="cell"><span class="label">চন্দ্রাস্ত</span><span id="moonset" class="value">-</span></div>
+    </div>
+    <div style="font-size:0.9em;margin-top:8px;">সূর্যচক্র Sync সক্রিয় · প্রতি ৩ ঘণ্টায় আপডেট</div>
+  </div>
+
+  <div class="panel ekadashi">
+    <h3>🕉️ পরবর্তী একাদশী</h3>
+    <div id="ekadashiName">--</div>
+    <div id="ekadashiDate">--</div>
+    <div id="ekadashiLeft">--</div>
+  </div>
+
+  <div class="panel festival">
+    <div class="icon">📣</div>
+    <div><b>আসন্ন উৎসব:</b> গীতা জয়ন্তী</div>
+    <div>৩২ দিন পর</div>
+  </div>
+
+  <div class="panel tide">
+    <h3>🌊 আজকের জোয়ার-ভাটা</h3>
+    <div class="tide-grid">
+      <div class="tide-cell"><b>জোয়ার ১:</b> <span id="tideHigh1">-</span></div>
+      <div class="tide-cell"><b>জোয়ার ২:</b> <span id="tideHigh2">-</span></div>
+      <div class="tide-cell"><b>ভাটা ১:</b> <span id="tideLow1">-</span></div>
+      <div class="tide-cell"><b>ভাটা ২:</b> <span id="tideLow2">-</span></div>
     </div>
   </div>
 
-  <!-- 🌼 একাদশী কার্ড -->
-  <div style="background:#dc2626;color:#fff;border-radius:16px;padding:10px;text-align:center;margin-bottom:8px;">
-    <h3>🕉️ পরবর্তী একাদশী</h3>
-    <div id="ekadashiName" style="font-size:1.2em;margin:6px 0;">—</div>
-    <div id="ekadashiDate">—</div>
-    <div id="ekadashiDays" style="opacity:.8;">—</div>
-  </div>
-
-  <!-- 🌊 জোয়ার-ভাটা কার্ড -->
-  <div style="background:linear-gradient(to bottom,#2563eb,#0f172a);color:#fff;border-radius:16px;padding:10px;margin-bottom:8px;">
-    <h3>🌊 জোয়ার ও ভাটা</h3>
-    <div id="tideList" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;"></div>
-  </div>
-
-  <!-- 📅 পপআপ ক্যালেন্ডার ট্রিগার -->
-  <div id="popupTrigger" style="background:#fff8e1;color:#7b1fa2;border-radius:16px;padding:10px;text-align:center;box-shadow:0 0 6px rgba(0,0,0,0.2);">
-    📅 সম্পূর্ণ হিন্দু পঞ্জিকা ক্যালেন্ডার খুলুন
-  </div>
-</div>
+  <div class="popup-trigger" id="calendarTrigger">📅 সম্পূর্ণ হিন্দু পঞ্জিকা ক্যালেন্ডার দেখুন</div>
 
 <script>
-async function loadPanchika(){
-  try{
-    const res=await fetch("/api/panchika");
-    const data=await res.json();
-    document.getElementById("tithi").textContent=data.tithi;
-    document.getElementById("nakshatra").textContent=data.nakshatra;
-    document.getElementById("sunrise").textContent=data.sunrise;
-    document.getElementById("sunset").textContent=data.sunset;
-    document.getElementById("moonrise").textContent=data.moonrise;
-    document.getElementById("moonset").textContent=data.moonset;
+fetch('/api/panchika')
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('tithi').textContent = data.tithi || '-';
+    document.getElementById('nakshatra').textContent = data.nakshatra || '-';
+    document.getElementById('sunrise').textContent = data.sunrise;
+    document.getElementById('sunset').textContent = data.sunset;
+    document.getElementById('moonrise').textContent = data.moonrise;
+    document.getElementById('moonset').textContent = data.moonset;
 
-    // একাদশী
-    document.getElementById("ekadashiName").textContent=data.ekadashi.name;
-    document.getElementById("ekadashiDate").textContent="📅 "+data.ekadashi.date;
-    document.getElementById("ekadashiDays").textContent=`⏳ ${data.ekadashi.days_left} দিন বাকি`;
-
-    // জোয়ার ভাটা
-    const t=document.getElementById("tideList");
-    t.innerHTML=data.tide.map(d=>`
-      <div style='background:rgba(255,255,255,0.15);border-radius:10px;padding:6px;text-align:center;'>
-        <b>${d.label}</b><br>${d.time}<br>${d.height} মি
-      </div>`).join("");
-
-  }catch(e){console.error(e);}
-}
-loadPanchika();
+    const e = data.ekadashi;
+    if (e) {
+      document.getElementById('ekadashiName').textContent = e.name;
+      document.getElementById('ekadashiDate').textContent = e.date;
+      document.getElementById('ekadashiLeft').textContent = `${e.days_left} দিন পর`;
+    }
+  })
+  .catch(err => console.error(err));
 </script>
+</body>
+</html>
