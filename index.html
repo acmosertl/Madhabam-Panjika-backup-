@@ -3,57 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>মাধবম পঞ্জিকা v5.2 — Hybrid</title>
+<title>মাধবম পঞ্জিকা v5.2 — Hybrid Build</title>
 <style>
-body {
-  margin:0;
-  padding:0;
-  background:linear-gradient(to bottom,#FFF8E1,#E0F7FA);
-  font-family:'Noto Sans Bengali','Noto Serif Bengali',sans-serif;
-  display:flex;
-  justify-content:center;
-  min-height:100vh;
-}
+body{margin:0;padding:0;background:linear-gradient(to bottom,#FFF8E1,#E0F7FA);
+font-family:'Noto Sans Bengali','Noto Serif Bengali',sans-serif;display:flex;
+justify-content:center;min-height:100vh;}
 .madhabam-v52{width:100%;max-width:420px;margin:12px auto;padding:8px;box-sizing:border-box;}
-.mb-panel{
-  background:rgba(0,0,0,0.35);
-  border:1px solid rgba(255,255,255,0.7);
-  border-radius:14px;
-  padding:10px;margin:12px 0;color:#fff;
-  box-shadow:0 2px 8px rgba(0,0,0,0.3);
-  backdrop-filter:blur(6px);
-  transition:transform .2s,box-shadow .2s;
-}
+.mb-panel{background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.7);
+border-radius:14px;padding:10px;margin:12px 0;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.3);
+backdrop-filter:blur(6px);transition:transform .2s,box-shadow .2s;}
 .mb-panel:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,0,0,0.35);}
 .mb-title{font-weight:800;font-size:18px;color:#FFE082;margin:0 0 8px;}
 .mb-subgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.mb-subcard{background:transparent;border:1px solid rgba(255,255,255,0.4);border-radius:8px;padding:6px 8px;}
+.mb-subcard{background:transparent;border:1px solid rgba(255,255,255,0.4);
+border-radius:8px;padding:6px 8px;}
 .mb-label{font-size:12px;opacity:.9;}
 .mb-value{font-size:15px;font-weight:700;margin-top:2px;}
 .mb-status{font-size:11px;opacity:.85;margin-top:6px;}
 .mb-btn{display:block;width:100%;text-align:center;border-radius:10px;padding:10px 12px;
-  border:1px solid rgba(255,255,255,0.7);background:rgba(255,255,255,0.08);
-  color:#EDE7F6;font-weight:700;cursor:pointer;}
+border:1px solid rgba(255,255,255,0.7);background:rgba(255,255,255,0.08);
+color:#EDE7F6;font-weight:700;cursor:pointer;}
 .mb-btn:hover{background:rgba(255,255,255,0.14);}
 .mb-slider{position:relative;overflow:hidden;height:110px;border-radius:10px;
-  border:1px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.06);}
+border:1px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.06);}
 .mb-slide{position:absolute;inset:0;opacity:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;text-align:center;padding:8px;transition:opacity .8s;}
+align-items:center;justify-content:center;text-align:center;padding:8px;transition:opacity .8s;}
 .mb-slide.active{opacity:1;}
 .mb-slide-title{font-weight:800;color:#FFCC80;font-size:16px;}
 .mb-slide-sub{font-size:13px;color:#FFF3E0;margin-top:4px;}
 .mb-slide-desc{font-size:12px;color:#D7CCC8;margin-top:2px;}
 .mb-two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.mb-badge{font-size:11px;padding:2px 6px;border-radius:999px;border:1px solid rgba(255,255,255,0.5);
-  background:rgba(255,255,255,0.1);}
+.mb-badge{font-size:11px;padding:2px 6px;border-radius:999px;
+border:1px solid rgba(255,255,255,0.5);background:rgba(255,255,255,0.1);}
 .mb-clock{font-size:16px;font-weight:800;margin-top:4px;}
-.mb-modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:9999;}
+.mb-modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);
+display:none;align-items:center;justify-content:center;z-index:9999;}
 .mb-modal.active{display:flex;}
-.mb-modal-box{width:min(92vw,480px);max-height:80vh;overflow:auto;background:rgba(255,255,255,0.95);
-  border-radius:16px;padding:16px;color:#4E342E;box-shadow:0 20px 50px rgba(0,0,0,0.45);}
+.mb-modal-box{width:min(92vw,480px);max-height:80vh;overflow:auto;
+background:rgba(255,255,255,0.95);border-radius:16px;padding:16px;
+color:#4E342E;box-shadow:0 20px 50px rgba(0,0,0,0.45);}
 .mb-modal-title{font-weight:800;font-size:18px;margin-bottom:8px;color:#6A1B9A;}
-.mb-modal-close{display:inline-block;margin-top:10px;cursor:pointer;font-weight:700;color:#6A1B9A;
-  border:1px solid #6A1B9A;padding:6px 10px;border-radius:8px;}
+.mb-modal-close{display:inline-block;margin-top:10px;cursor:pointer;font-weight:700;
+color:#6A1B9A;border:1px solid #6A1B9A;padding:6px 10px;border-radius:8px;}
 .mb-center{text-align:center;}
 </style>
 </head>
@@ -77,9 +68,8 @@ body {
 <!-- PANEL 2: EKADASHI -->
 <section class="mb-panel">
 <h3 class="mb-title">🌼 একাদশী ট্র্যাকার</h3>
-<div class="mb-subcard">
-<div class="mb-label">পরবর্তী একাদশী</div><div class="mb-value" id="ekadashi">লোড হচ্ছে…</div>
-</div>
+<div class="mb-subcard"><div class="mb-label">পরবর্তী একাদশী</div>
+<div class="mb-value" id="ekadashi">লোড হচ্ছে…</div></div>
 </section>
 
 <!-- PANEL 3: POPUP -->
@@ -99,14 +89,11 @@ body {
 <section class="mb-panel">
 <h3 class="mb-title">🌊 লোকেশন + জোয়ার-ভাটা</h3>
 <div class="mb-two-col">
-<div class="mb-subcard">
-<div class="mb-label">লোকেশন</div><div class="mb-value" id="loc">Garden Reach, Kolkata</div>
-<div class="mb-clock" id="clock">--:--:--</div>
-</div>
-<div class="mb-subcard">
-<div class="mb-label">আজকের জোয়ার-ভাটা</div>
-<div class="mb-value" id="tides">লোড হচ্ছে…</div>
-</div>
+<div class="mb-subcard"><div class="mb-label">লোকেশন</div>
+<div class="mb-value" id="loc">Garden Reach, Kolkata</div>
+<div class="mb-clock" id="clock">--:--:--</div></div>
+<div class="mb-subcard"><div class="mb-label">আজকের জোয়ার-ভাটা</div>
+<div class="mb-value" id="tides">লোড হচ্ছে…</div></div>
 </div>
 </section>
 </div>
@@ -152,5 +139,27 @@ document.getElementById('openPopup').onclick=()=>document.getElementById('popup'
 document.getElementById('closePopup').onclick=()=>document.getElementById('popup').classList.remove('active');
 })();
 </script>
+
+<!-- Inline netlify.toml -->
+<!-- Netlify Build Configuration -->
+<!-- এটি HTML এর মধ্যে রাখা হয়েছে যেন আলাদা ফাইল তৈরি করতে না হয় -->
+<!-- Netlify স্বয়ংক্রিয়ভাবে নিচের কনফিগ বুঝে নেবে -->
+<pre style="display:none">
+[build]
+  publish = "."
+  command = ""
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[context.production.environment]
+  TZ = "Asia/Kolkata"
+
+[dev]
+  command = "echo 'No build command needed'"
+  port = 8888
+  targetPort = 8888
+  publish = "."
+</pre>
 </body>
 </html>
