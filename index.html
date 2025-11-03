@@ -1,149 +1,139 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>মাধবম পঞ্জিকা</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>মাধবম পঞ্জিকা — Panel One</title>
 <style>
-  body {
-    font-family: "Noto Sans Bengali", sans-serif;
-    background: #fff1d6;
-    margin: 0;
-    padding: 20px;
+  :root{
+    --bg:#fff1d6;
+    --card:#ffffff;
+    --radius:16px;
+    --shadow:0 2px 10px rgba(0,0,0,.14);
+    --yellow-deep:#ffd740;   /* গাঢ় হলুদ (label) */
+    --yellow-soft:#ffe97a;
+    --pink:#ff9ee7;
+    --red:#d32f2f;
+    --fest:#fff59d;
+    --festText:#b71c1c;
+    --blue1:#1e3a8a; --blue2:#0d1b4c;
   }
-  .panel {
-    border-radius: 16px;
-    padding: 12px 14px;
-    margin-bottom: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  }
-  .panchika {
-    background: linear-gradient(to bottom, #ffe97a, #ffd740);
-    text-align: center;
-  }
-  .panchika h2 { color: #663300; margin: 6px 0 10px; font-size: 1.3em; }
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-  }
-  .cell {
-    background: #ff9ee7;
-    border-radius: 10px;
-    padding: 6px;
-    font-size: 1em;
-  }
-  .label {
-    color: #fff;
-    text-shadow: 0 0 4px #000;
-    display: block;
-  }
-  .value { font-weight: bold; color: #000; }
-  .ekadashi {
-    background: #d32f2f;
-    color: #fff;
-    text-align: center;
-    font-size: 1.1em;
-  }
-  .ekadashi h3 { margin: 0 0 8px; }
-  .festival {
-    background: #fff59d;
-    color: #b71c1c;
-    text-align: center;
-    font-size: 1.05em;
-  }
-  .tide {
-    background: linear-gradient(to bottom, #1e3a8a, #0d1b4c);
-    color: #fff;
-  }
-  .tide h3 { text-align:center; margin:4px 0 8px;}
-  .tide-grid {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-  }
-  .tide-cell {
-    background: rgba(255,255,255,0.15);
-    padding:6px;
-    border-radius:10px;
-  }
-  .icon {
-    text-shadow: 0 0 6px rgba(255,255,255,0.8);
-    font-size:1.3em;
-  }
-  .popup-trigger {
-    background:#FFF8E1;
-    color:#7B1FA2;
-    text-align:center;
-    border-radius:12px;
-    padding:10px;
-    font-weight:bold;
-    cursor:pointer;
-    box-shadow:0 2px 6px rgba(0,0,0,0.2);
-  }
-  .popup-trigger:hover {
-    box-shadow:0 0 10px rgba(123,31,162,0.5);
+  body{margin:0;background:var(--bg);font-family:"Noto Sans Bengali",sans-serif;padding:16px}
+  .panel{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 14px;margin:0 auto 14px;max-width:720px}
+  /* পঞ্জিকা */
+  .panchika{background:linear-gradient(to bottom,var(--yellow-soft),var(--yellow-deep));text-align:center}
+  .panchika h2{color:#5c2f00;margin:.4rem 0 .6rem}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .cell{background:var(--pink);border-radius:12px;padding:8px}
+  .label{color:#1b1b1b;background:linear-gradient(to right,#fffad1,#ffe97a);display:inline-block;padding:2px 8px;border-radius:6px;font-weight:800}
+  .value{display:block;margin-top:6px;font-weight:800;color:#000}
+  /* একাদশী */
+  .eka{background:var(--red);color:#fff;text-align:center}
+  .eka h3{margin:.3rem 0 .5rem}
+  .eka .name{font-size:1.25rem;font-weight:800}
+  .eka .meta{opacity:.9}
+  /* ইভেন্ট */
+  .fest{background:var(--fest);color:var(--festText);text-align:center}
+  .icon{font-size:1.3em;text-shadow:0 0 9px rgba(255,255,255,.85)}
+  /* জোয়ার-ভাটা */
+  .tide{background:linear-gradient(to bottom,var(--blue1),var(--blue2));color:#fff}
+  .tide h3{text-align:center;margin:.4rem 0 .7rem}
+  .tide-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .tide-cell{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);border-radius:12px;padding:8px}
+  .tide-row{display:flex;justify-content:space-between;gap:8px}
+  .tide-label{font-weight:800;opacity:.95}
+  .tide-val{font-weight:800}
+  /* পপআপ ট্রিগার */
+  .trigger{background:#FFF8E1;color:#7B1FA2;text-align:center;border-radius:12px;padding:12px;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer}
+  .trigger:hover{box-shadow:0 0 12px rgba(123,31,162,.4)}
+  /* ছোট ডিভাইস */
+  @media (max-width:480px){
+    .grid{gap:6px}
+    .cell{padding:6px}
   }
 </style>
 </head>
 <body>
-  <div class="panel panchika">
+  <!-- 🪔 পঞ্জিকা -->
+  <section class="panel panchika">
     <h2>🪔 পঞ্জিকা</h2>
     <div class="grid">
-      <div class="cell"><span class="label">তিথি</span><span id="tithi" class="value">-</span></div>
-      <div class="cell"><span class="label">নক্ষত্র</span><span id="nakshatra" class="value">-</span></div>
-      <div class="cell"><span class="label">সূর্যোদয়</span><span id="sunrise" class="value">-</span></div>
-      <div class="cell"><span class="label">সূর্যাস্ত</span><span id="sunset" class="value">-</span></div>
-      <div class="cell"><span class="label">চন্দ্রোদয়</span><span id="moonrise" class="value">-</span></div>
-      <div class="cell"><span class="label">চন্দ্রাস্ত</span><span id="moonset" class="value">-</span></div>
+      <div class="cell"><span class="label">তিথি</span><span id="tithi" class="value">—</span></div>
+      <div class="cell"><span class="label">নক্ষত্র</span><span id="nakshatra" class="value">—</span></div>
+      <div class="cell"><span class="label">সূর্যোদয়</span><span id="sunrise" class="value">—</span></div>
+      <div class="cell"><span class="label">সূর্যাস্ত</span><span id="sunset" class="value">—</span></div>
+      <div class="cell"><span class="label">চন্দ্রোদয়</span><span id="moonrise" class="value">—</span></div>
+      <div class="cell"><span class="label">চন্দ্রাস্ত</span><span id="moonset" class="value">—</span></div>
     </div>
-    <div style="font-size:0.9em;margin-top:8px;">সূর্যচক্র Sync সক্রিয় · প্রতি ৩ ঘণ্টায় আপডেট</div>
-  </div>
+    <div style="font-size:.9em;margin-top:8px">সূর্য/চন্দ্র ডাটা ৩ ঘণ্টা অন্তর রিফ্রেশ</div>
+  </section>
 
-  <div class="panel ekadashi">
+  <!-- 🕉️ পরবর্তী একাদশী -->
+  <section class="panel eka">
     <h3>🕉️ পরবর্তী একাদশী</h3>
-    <div id="ekadashiName">--</div>
-    <div id="ekadashiDate">--</div>
-    <div id="ekadashiLeft">--</div>
-  </div>
+    <div id="ekaName" class="name">—</div>
+    <div id="ekaDate" class="meta">—</div>
+    <div id="ekaDays" class="meta">—</div>
+  </section>
 
-  <div class="panel festival">
+  <!-- 📣 আসন্ন উৎসব (placeholder demo) -->
+  <section class="panel fest">
     <div class="icon">📣</div>
     <div><b>আসন্ন উৎসব:</b> গীতা জয়ন্তী</div>
     <div>৩২ দিন পর</div>
-  </div>
+  </section>
 
-  <div class="panel tide">
+  <!-- 🌊 জোয়ার-ভাটা (২ জোয়ার + ২ ভাটা) -->
+  <section class="panel tide">
     <h3>🌊 আজকের জোয়ার-ভাটা</h3>
     <div class="tide-grid">
-      <div class="tide-cell"><b>জোয়ার ১:</b> <span id="tideHigh1">-</span></div>
-      <div class="tide-cell"><b>জোয়ার ২:</b> <span id="tideHigh2">-</span></div>
-      <div class="tide-cell"><b>ভাটা ১:</b> <span id="tideLow1">-</span></div>
-      <div class="tide-cell"><b>ভাটা ২:</b> <span id="tideLow2">-</span></div>
+      <div class="tide-cell"><div class="tide-row"><span class="tide-label">উচ্চ জোয়ার ১</span><span id="th1" class="tide-val">—</span></div></div>
+      <div class="tide-cell"><div class="tide-row"><span class="tide-label">উচ্চ জোয়ার ২</span><span id="th2" class="tide-val">—</span></div></div>
+      <div class="tide-cell"><div class="tide-row"><span class="tide-label">নিম্ন ভাটা ১</span><span id="tl1" class="tide-val">—</span></div></div>
+      <div class="tide-cell"><div class="tide-row"><span class="tide-label">নিম্ন ভাটা ২</span><span id="tl2" class="tide-val">—</span></div></div>
     </div>
-  </div>
+  </section>
 
-  <div class="popup-trigger" id="calendarTrigger">📅 সম্পূর্ণ হিন্দু পঞ্জিকা ক্যালেন্ডার দেখুন</div>
+  <!-- 📅 Popup Calendar Trigger (placeholder URL/data-hook) -->
+  <section class="panel trigger" id="calendarTrigger" data-popup="madhabam-fullcalendar" data-href="/calendar">
+    📅 সম্পূর্ণ হিন্দু পঞ্জিকা ক্যালেন্ডার দেখুন
+  </section>
 
 <script>
-fetch('/api/panchika')
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById('tithi').textContent = data.tithi || '-';
-    document.getElementById('nakshatra').textContent = data.nakshatra || '-';
-    document.getElementById('sunrise').textContent = data.sunrise;
-    document.getElementById('sunset').textContent = data.sunset;
-    document.getElementById('moonrise').textContent = data.moonrise;
-    document.getElementById('moonset').textContent = data.moonset;
+(async function(){
+  try{
+    const res = await fetch('/api/panchika', { cache: 'no-store' });
+    const d = await res.json();
 
-    const e = data.ekadashi;
-    if (e) {
-      document.getElementById('ekadashiName').textContent = e.name;
-      document.getElementById('ekadashiDate').textContent = e.date;
-      document.getElementById('ekadashiLeft').textContent = `${e.days_left} দিন পর`;
+    // পঞ্জিকা
+    set('tithi', d.tithi); set('nakshatra', d.nakshatra);
+    set('sunrise', d.sunrise); set('sunset', d.sunset);
+    set('moonrise', d.moonrise); set('moonset', d.moonset);
+
+    // একাদশী
+    if (d.ekadashi){
+      set('ekaName', d.ekadashi.name || '—');
+      set('ekaDate', d.ekadashi.date ? '📅 '+d.ekadashi.date : '—');
+      set('ekaDays', (typeof d.ekadashi.days_left==='number') ? `⏳ ${d.ekadashi.days_left} দিন বাকি` : '—');
     }
-  })
-  .catch(err => console.error(err));
+
+    // জোয়ার-ভাটা (২ High, ২ Low) – যদি লেবেল/অর্ডার না আসে, প্লেসহোল্ডার দেখাবে
+    const T = (d.tide || []);
+    set('th1', T[0]?.time || '—');
+    set('th2', T[1]?.time || '—');
+    set('tl1', T[2]?.time || '—');
+    set('tl2', T[3]?.time || '—');
+  }catch(e){ console.error(e); }
+
+  // popup trigger placeholder (future modal hook)
+  const trg = document.getElementById('calendarTrigger');
+  trg.addEventListener('click', () => {
+    // later: open modal with id from data-popup
+    alert('Popup Calendar placeholder active. Hook: '+ trg.dataset.popup +' | href: '+ trg.dataset.href);
+  });
+
+  function set(id, v){ document.getElementById(id).textContent = v ?? '—'; }
+})();
 </script>
 </body>
 </html>
