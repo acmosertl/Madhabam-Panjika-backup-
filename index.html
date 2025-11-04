@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>🪔 মাধবম পঞ্জিকা vC4</title>
+<title>🪔 মাধবম পঞ্জিকা vC5</title>
 <style>
 :root{
   --bg:#fff4e3;--card:#fff8ee;--pink:#f6a9d6;
@@ -18,7 +18,7 @@ body{margin:0;background:var(--bg);font-family:"Noto Sans Bengali",system-ui,san
 .grid{display:grid;gap:10px}
 .grid-2{grid-template-columns:1fr 1fr}
 
-/* পঞ্জিকা পিল */
+/* পঞ্জিকা */
 .pill{background:var(--pink);border-radius:14px;padding:12px}
 .label{color:var(--label);font-weight:900;margin-bottom:4px}
 .value{font-weight:900;font-size:26px;line-height:1.18}
@@ -31,12 +31,12 @@ body{margin:0;background:var(--bg);font-family:"Noto Sans Bengali",system-ui,san
   text-shadow:0 0 14px #ffeb3b,0 0 28px #ffd54f}
 .eka-meta{font-size:20px;font-weight:800;margin-top:4px}
 
-/* আসন্ন উৎসব */
+/* উৎসব */
 .up{background:#ffe895;text-align:center;color:#b71c1c}
 .up .name{font-weight:900;font-size:30px}
 .up .meta{font-weight:900;font-size:20px;margin-top:4px}
 
-/* জোয়ার ভাটা */
+/* জোয়ার-ভাটা */
 .tideBlock{background:linear-gradient(180deg,#183a8a,#0b2257);color:#fff;border-radius:18px;padding:12px;margin:10px}
 .tbTitle{text-align:center;font-size:20px;font-weight:900;margin-bottom:8px}
 .tideGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -57,10 +57,16 @@ body{margin:0;background:var(--bg);font-family:"Noto Sans Bengali",system-ui,san
       <div class="pill">
         <div class="label">তিথি</div>
         <div class="value" id="tithi">—</div>
+        <div class="sub"><b>শেষ:</b> <span id="tithiEnds">—</span> &nbsp;•&nbsp; <b>পরবর্তী:</b> <span id="tithiNext">—</span></div>
+      </div>
+      <div class="pill">
+        <div class="label">পক্ষ</div>
+        <div class="value" id="paksha">—</div>
       </div>
       <div class="pill">
         <div class="label">নক্ষত্র</div>
         <div class="value" id="nakshatra">—</div>
+        <div class="sub"><b>শেষ:</b> <span id="nEnd">—</span> &nbsp;•&nbsp; <b>পরবর্তী:</b> <span id="nNext">—</span></div>
       </div>
     </div>
     <div class="grid grid-2" style="margin-top:10px">
@@ -77,9 +83,10 @@ body{margin:0;background:var(--bg);font-family:"Noto Sans Bengali",system-ui,san
     <div class="eka-name" id="ekaName">—</div>
     <div class="eka-meta" id="ekaDate">—</div>
     <div class="eka-meta" id="ekaLeft">— দিন বাকি</div>
+    <div class="eka-meta" id="ekaParana">—</div>
   </section>
 
-  <!-- 📣 আসন্ন উৎসব -->
+  <!-- 📣 উৎসব -->
   <section class="card up">
     <div class="name" id="festName">📣 —</div>
     <div class="meta" id="festDate">—</div>
@@ -109,62 +116,66 @@ body{margin:0;background:var(--bg);font-family:"Noto Sans Bengali",system-ui,san
 
 </div>
 
-<!-- 🔄 Auto Panchika Engine -->
+<!-- 🔄 Panchika Auto Engine -->
 <script>
 async function loadPanchika(){
   try{
-    const res = await fetch('https://madhabam-panjika.vercel.app/api/update');
+    const res = await fetch('https://madhabam-panjika.vercel.app/api/update?ts=' + Date.now());
     const j = await res.json();
-    if(!j.ok || !j.data){ console.warn("❌ Empty Panchika Data"); return; }
+    if(!j.ok || !j.data){ console.warn("❌ No Panchika Data"); return; }
 
     const p = j.data;
-    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v||'—';};
+    const set = (id,v)=>{ const e=document.getElementById(id); if(e) e.textContent=v||'—'; };
+    const fmt = t => {
+      if(!t) return '—';
+      let [h,m] = t.split(':').map(Number);
+      const ampm = h>=12?'PM':'AM';
+      h = h%12||12;
+      return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')} ${ampm}`;
+    };
 
-    // ☀️ মৌলিক পঞ্জিকা
+    // 🪔 Panchika base
     set('tithi', p.tithi);
+    set('paksha', p.paksha);
     set('nakshatra', p.nakshatra);
-    set('sunrise', p.sunrise);
-    set('sunset', p.sunset);
-    set('moonrise', p.moonrise);
-    set('moonset', p.moonset);
+    set('sunrise', fmt(p.sunrise));
+    set('sunset', fmt(p.sunset));
+    set('moonrise', fmt(p.moonrise));
+    set('moonset', fmt(p.moonset));
 
-    // 🌼 একাদশী
+    // 🌼 Ekadashi
     if(p.ekadashi){
       set('ekaName', p.ekadashi.name);
-      set('ekaDate', p.ekadashi.date);
+      set('ekaDate', new Date(p.ekadashi.date).toLocaleDateString('bn-BD'));
       set('ekaLeft', `${p.ekadashi.days_left} দিন বাকি`);
+      set('ekaParana', p.ekadashi.parana || '—');
     }
 
-    // 📣 উৎসব
+    // 📣 Festival
     if(p.events && p.events.length){
       set('festName', p.events[0].name);
-      set('festDate', `${p.events[0].date} • ${p.events[0].days_left} দিন পরে`);
+      set('festDate', `${new Date(p.events[0].date).toLocaleDateString('bn-BD')} • ${p.events[0].days_left} দিন পরে`);
     }
 
-    // 🌊 জোয়ার/ভাটা
+    // 🌊 Tide
     if(p.tide && p.tide.length>=4){
-      set('tj1', p.tide[0].time);
-      set('tj2', p.tide[1].time);
-      set('tv1', p.tide[2].time);
-      set('tv2', p.tide[3].time);
+      set('tj1', fmt(p.tide[0].time));
+      set('tj2', fmt(p.tide[1].time));
+      set('tv1', fmt(p.tide[2].time));
+      set('tv2', fmt(p.tide[3].time));
     }
 
-    // 🕒 কলকাতার সময়
+    // 🕒 Kolkata time
     const now = new Date();
-    const kolTime = new Intl.DateTimeFormat('bn-BD',{
-      hour:'2-digit',minute:'2-digit',second:'2-digit'
-    }).format(now);
-    set('kTimeJ', kolTime);
-    set('kTimeV', kolTime);
-
-    console.log("✅ Panchika Updated", p);
+    const kol = now.toLocaleTimeString('bn-BD',{hour12:true});
+    set('kTimeJ', kol);
+    set('kTimeV', kol);
+    console.log("✅ Panchika Updated:", p);
   }
-  catch(err){
-    console.error("⚠️ Panchika Load Failed:", err);
-  }
+  catch(err){ console.error("⚠️ Panchika Load Failed:", err); }
 }
 
-// প্রথমবার লোডের সময় কল
+// প্রথমবার লোডের সময়
 loadPanchika();
 
 // প্রতি ৩ ঘণ্টা পর রিফ্রেশ
