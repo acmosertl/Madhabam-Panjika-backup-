@@ -1,15 +1,8 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/panchika.js",
-      "use": "@vercel/node"
-    }
-  ],
+  "public": true,
   "routes": [
-    {
-      "src": "/api/panchika",
-      "dest": "/api/panchika.js"
-    }
+    { "src": "/api/(.*)", "dest": "/api/$1.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
