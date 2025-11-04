@@ -1,18 +1,17 @@
 {
   "version": 3,
-  "framework": "none",
+  "framework": null,
+  "buildCommand": "echo 'Building Madhabam Panjika API...'",
+  "outputDirectory": ".",
   "functions": {
-    "api/**/*.js": {
+    "api/panchika.js": {
       "runtime": "nodejs20.x"
     }
   },
-  "buildCommand": "",
-  "outputDirectory": "",
-  "ignoreCommand": "",
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "src": "/api/panchika",
+      "dest": "/api/panchika.js"
     }
   ]
 }
