@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>🪔 মাধবম পঞ্জিকা vC1.4</title>
+<title>🪔 মাধবম পঞ্জিকা vC2 Final</title>
 <style>
 :root {
-  --bg:#fff4e3;--card:#fff8ee;--pink:#f7a9d6;
+  --bg:#fff4e3;--card:#fff8ee;--pink:#f6a9d6;
   --red:#c62828;--gold:#ffd740;--deep:#0d2a68;
   --label:#4527a0;--shadow:0 6px 16px rgba(0,0,0,.12);
 }
@@ -21,17 +21,17 @@ body{margin:0;background:var(--bg);font-family:"Noto Sans Bengali",sans-serif}
 .value{font-weight:900;font-size:26px}
 /* Ekadashi */
 .eka{background:var(--red);color:#fff;text-align:center}
-.eka-name{color:var(--gold);font-size:36px;font-weight:900;
-text-shadow:0 0 10px #ffd740c9,0 0 25px #ffecb3a8;}
+.eka-name{color:var(--gold);font-size:36px;font-weight:900;text-shadow:0 0 12px #ffd740c9,0 0 25px #ffecb3a8;}
 .eka-meta{font-size:18px;font-weight:700;margin-top:4px}
+/* Upcoming festival */
+.up{background:#ffe895;text-align:center;color:#b71c1c;font-weight:800}
 /* Tide */
 .tide{background:linear-gradient(180deg,#183a8a,#0d2a68);color:#fff;text-align:center}
 .tideGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
 .tideCell{background:rgba(255,255,255,.1);border-radius:14px;padding:12px}
 .tideLab{font-weight:700;margin-bottom:2px}
 .tideVal{font-weight:900;font-size:20px}
-/* Calendar trigger */
-.cal{text-align:center;background:#fff7d9;font-weight:800;color:#512da8}
+.timeBox{margin-top:10px;font-size:18px;font-weight:700;color:#ffe082}
 </style>
 </head>
 <body>
@@ -53,9 +53,6 @@ text-shadow:0 0 10px #ffd740c9,0 0 25px #ffecb3a8;}
   </div>
 </section>
 
-<!-- Calendar Trigger -->
-<section class="card cal">📅 সম্পূর্ণ হিন্দু পঞ্জিকা ক্যালেন্ডার দেখুন</section>
-
 <!-- একাদশী -->
 <section class="card eka">
   <div class="title">🌼 পরবর্তী একাদশী</div>
@@ -64,7 +61,13 @@ text-shadow:0 0 10px #ffd740c9,0 0 25px #ffecb3a8;}
   <div class="eka-meta" id="ekaLeft">— দিন বাকি</div>
 </section>
 
-<!-- Tide -->
+<!-- আসন্ন উৎসব -->
+<section class="card up">
+  <div id="festName">📣 —</div>
+  <div id="festDate">—</div>
+</section>
+
+<!-- জোয়ার-ভাটা -->
 <section class="card tide">
   <div class="title">🌊 আজকের জোয়ার-ভাটা</div>
   <div class="tideGrid">
@@ -73,29 +76,39 @@ text-shadow:0 0 10px #ffd740c9,0 0 25px #ffecb3a8;}
     <div class="tideCell"><div class="tideLab">নিম্ন ভাটা ১</div><div class="tideVal" id="t3">—</div></div>
     <div class="tideCell"><div class="tideLab">নিম্ন ভাটা ২</div><div class="tideVal" id="t4">—</div></div>
   </div>
+  <div class="timeBox" id="clock">—</div>
 </section>
 
 </div>
 
 <script>
 (async()=>{
-  const bn=(s)=>String(s).replace(/\d/g,d=>"০১২৩৪৫৬৭৮৯"[d]);
   const j=await fetch('/api/panchika').then(r=>r.json());
-  document.getElementById('tithi').textContent=j.tithi;
+  document.getElementById('tithi').textContent=j.tithi.current;
   document.getElementById('paksha').textContent=j.paksha;
-  document.getElementById('nakshatra').textContent=j.nakshatra;
-  ['sunrise','sunset','moonrise','moonset'].forEach(id=>{
-    document.getElementById(id).textContent=j[id]||'—';
-  });
+  document.getElementById('nakshatra').textContent=j.nakshatra.current;
+  ['sunrise','sunset','moonrise','moonset'].forEach(id=>document.getElementById(id).textContent=j[id]);
   document.getElementById('ekaName').textContent=j.ekadashi.name;
-  document.getElementById('ekaDate').textContent=bn(j.ekadashi.date);
-  document.getElementById('ekaLeft').textContent=bn(j.ekadashi.days_left)+' দিন বাকি';
+  document.getElementById('ekaDate').textContent=j.ekadashi.date;
+  document.getElementById('ekaLeft').textContent=j.ekadashi.days_left+' দিন বাকি';
+  document.getElementById('festName').textContent='📣 '+j.festival.name;
+  document.getElementById('festDate').textContent=j.festival.date+' • '+j.festival.days_left+' দিন পরে';
   document.getElementById('t1').textContent=j.tide[0].time;
   document.getElementById('t2').textContent=j.tide[1].time;
   document.getElementById('t3').textContent=j.tide[2].time;
   document.getElementById('t4').textContent=j.tide[3].time;
+  // Kolkata time live
+  function clock(){
+    const now=new Date();
+    const h=now.getHours(), m=now.getMinutes(), s=now.getSeconds();
+    const ampm=h>=12?"PM":"AM";
+    const hr=((h+11)%12)+1;
+    const bn=d=>("০১২৩৪৫৬৭৮৯"[d]||d);
+    document.getElementById('clock').textContent=
+      `🕒 কলকাতা সময়: ${bn(hr)}:${bn(Math.floor(m/10))}${bn(m%10)}:${bn(Math.floor(s/10))}${bn(s%10)} ${ampm}`;
+  }
+  setInterval(clock,1000);clock();
 })();
 </script>
-
 </body>
 </html>
