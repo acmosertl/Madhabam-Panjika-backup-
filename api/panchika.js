@@ -1,5 +1,5 @@
-// ✅ Madhabam Panchika API Serverless Function for Vercel
-import computePanchika from "../lib/panchika-core.js";
+// api/panchika.js
+import { computePanchika } from "../lib/panchika-core.js";
 
 export default async function handler(req, res) {
   try {
@@ -8,14 +8,12 @@ export default async function handler(req, res) {
     const longitude = isFinite(lon) ? +lon : 88.3378;
 
     const data = await computePanchika({ latitude, longitude, tz, mode });
-
     res.setHeader("Cache-Control", "s-maxage=900, stale-while-revalidate=3600");
     res.status(200).json(data);
-  } catch (e) {
-    console.error("❌ Panchika Engine Error:", e);
+  } catch (err) {
     res.status(500).json({
       error: "Panchika Engine Error",
-      message: e?.message || "Unknown failure in Panchika Engine",
+      message: String(err?.message || err),
     });
   }
 }
