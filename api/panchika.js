@@ -1,21 +1,29 @@
-// Vercel Serverless Function (Node 18+)
-import { computePanchika } from "../lib/panchika-core.js";
+// Madhabam Panjika Serverless Function (Node 20 Compatible)
 
-export default async function handler(req, res) {
+const { computePanchika } = require("../lib/panchika-core.js");
+
+module.exports = async (req, res) => {
   try {
-    const { lat, lon, mode = "drik", tz = "Asia/Kolkata" } = req.query || {};
+    const query = req.query || {};
+    const lat = parseFloat(query.lat) || 22.5411;
+    const lon = parseFloat(query.lon) || 88.3378;
+    const mode = query.mode || "drik";
+    const tz = "Asia/Kolkata";
 
-    const latitude = isFinite(lat) ? +lat : 22.5411;
-    const longitude = isFinite(lon) ? +lon : 88.3378;
-
-    const data = await computePanchika({ latitude, longitude, tz, mode });
+    const data = await computePanchika({
+      latitude: lat,
+      longitude: lon,
+      tz,
+      mode
+    });
 
     res.setHeader("Cache-Control", "s-maxage=900, stale-while-revalidate=3600");
     res.status(200).json(data);
-  } catch (e) {
+  } catch (error) {
+    console.error("Panchika API Error:", error);
     res.status(500).json({
       error: "Panchika Engine Error",
-      message: String(e?.message || e),
+      message: error.message || String(error)
     });
   }
-}
+};
