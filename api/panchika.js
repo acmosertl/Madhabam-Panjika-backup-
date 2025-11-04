@@ -1,64 +1,72 @@
-// Mādhabam Panchika vC3 — Panchika Engine (Live)
-// Kolkata-locked | 12-hour Bengali time | Dynamic Tithi/Nakshatra placeholders
+// Mādhabam Panchika vC4 — Single-Shot Build
+// Kolkata-locked; Sun/Moon live (Open-Meteo); Tide fixed slots; Panchika fields structured (Approx mode)
 
 export default async function handler(req, res) {
-  const lat = 22.5411;
-  const lon = 88.3136;
+  const lat = 22.5411, lon = 88.3136; // Garden Reach (Kolkata)
   const tz = "Asia/Kolkata";
 
-  const toBN = (num) =>
-    num.toString().replace(/[0-9]/g, (d) => "০১২৩৪৫৬৭৮৯"[d]);
-
-  const to12hBN = (time) => {
-    if (!time) return "—";
-    let [h, m] = time.split(":").map(Number);
+  const toBN = s => String(s).replace(/[0-9]/g, d => "০১২৩৪৫৬৭৮৯"[d]);
+  const to12hBN = hhmm => {
+    if (!hhmm) return "—";
+    let [h, m] = hhmm.split(":").map(Number);
     const ampm = h >= 12 ? "PM" : "AM";
     h = ((h + 11) % 12) + 1;
-    return `${toBN(h)}:${toBN(m.toString().padStart(2, "0"))} ${ampm}`;
+    return `${toBN(h)}:${toBN(String(m).padStart(2,"0"))} ${ampm}`;
   };
 
+  // Defaults (fallback so the UI never goes blank)
+  let sr="06:00", ss="17:00", mr="14:00", ms="02:00";
+
   try {
-    // Fetch sunrise/sunset/moon data
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=sunrise,sunset,moonrise,moonset&timezone=${tz}`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=sunrise,sunset,moonrise,moonset&timezone=${encodeURIComponent(tz)}`;
     const r = await fetch(url);
     const j = await r.json();
+    if (j?.daily) {
+      const chop = s => s?.split("T")[1]?.slice(0,5);
+      sr = chop(j.daily.sunrise?.[0]) || sr;
+      ss = chop(j.daily.sunset?.[0])  || ss;
+      mr = chop(j.daily.moonrise?.[0])|| mr;
+      ms = chop(j.daily.moonset?.[0]) || ms;
+    }
+  } catch (_) { /* fallback remains */ }
 
-    const sr = j.daily.sunrise[0].split("T")[1].substring(0, 5);
-    const ss = j.daily.sunset[0].split("T")[1].substring(0, 5);
-    const mr = j.daily.moonrise[0].split("T")[1].substring(0, 5);
-    const ms = j.daily.moonset[0].split("T")[1].substring(0, 5);
+  // Static demo ekadashi & festival (UI-ready)
+  const ekDate = "2025-11-15";
+  const daysLeft = Math.max(0, Math.ceil((new Date(`${ekDate}T00:00:00+05:30`) - new Date())/(1000*60*60*24)));
 
-    // Static demo data (will later pull from DrikPanchang API)
-    const data = {
-      tithi: { current: "একাদশী", ends_at: "১১:৪৫ PM", next: "দ্বাদশী" },
-      paksha: "কৃষ্ণ পক্ষ",
-      nakshatra: { current: "অশ্বিনী", ends_at: "০৮:৩০ AM", next: "ভরণী" },
-      sunrise: to12hBN(sr),
-      sunset: to12hBN(ss),
-      moonrise: to12hBN(mr),
-      moonset: to12hBN(ms),
-      ekadashi: {
-        name: "রমা একাদশী",
-        date: "15-11-2025",
-        days_left: 11,
-      },
-      festival: {
-        name: "গীতা জয়ন্তী",
-        date: "05-12-2025",
-        days_left: 31,
-      },
-      tide: [
-        { label: "উচ্চ জোয়ার ১", time: "০৬:১২ AM" },
-        { label: "উচ্চ জোয়ার ২", time: "০৬:৩৭ PM" },
-        { label: "নিম্ন ভাটা ১", time: "১২:২০ PM" },
-        { label: "নিম্ন ভাটা ২", time: "১২:৪৮ AM" },
-      ],
-      updated: new Date().toISOString(),
-    };
+  const out = {
+    mode: "approx", // Panchika core not yet Drik/Surya-synced (placeholder names below so UI stays filled)
+    tithi: { name_bn: "ত্রয়োদশী", ends_at: "১১:৪৫ PM", next_bn: "চতুর্দশী" },
+    paksha: "কৃষ্ণ পক্ষ",
+    nakshatra: { name_bn: "অশ্বিনী", ends_at: "০৮:৩০ AM", next_bn: "ভরণী" },
 
-    res.setHeader("Cache-Control", "s-maxage=10800, stale-while-revalidate=5400");
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json({ error: "Panchika Engine Error", message: err.message });
-  }
+    sunrise: to12hBN(sr),
+    sunset:  to12hBN(ss),
+    moonrise:to12hBN(mr),
+    moonset: to12hBN(ms),
+
+    ekadashi: {
+      name_bn: "রমা একাদশী",
+      date: "15-11-2025",
+      days_left: daysLeft,
+      parana_note: "পারণ: একাদশী শেষে দ্বাদশীতে শাস্ত্রোক্ত সময়ে"
+    },
+
+    upcoming: {
+      title: "গীতা জয়ন্তী",
+      date: "05-12-2025",
+      days_left: Math.max(0, Math.ceil((new Date("2025-12-05T00:00:00+05:30") - new Date())/(1000*60*60*24)))
+    },
+
+    tide: {
+      location: "কলকাতা",
+      high: ["০৬:১২ AM", "০৬:৩৭ PM"],
+      low:  ["১২:২০ PM", "১২:৪৮ AM"]
+    },
+
+    updated: new Date().toISOString()
+  };
+
+  res.setHeader("Cache-Control", "s-maxage=10800, stale-while-revalidate=5400");
+  return res.status(200).json(out);
 }
