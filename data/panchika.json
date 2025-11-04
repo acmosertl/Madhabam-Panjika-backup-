@@ -1,23 +1,15 @@
 {
-  "tithi": "—",
-  "nakshatra": "—",
-  "sunrise": "06:00 AM",
-  "sunset": "05:00 PM",
-  "moonrise": "02:00 PM",
-  "moonset": "02:00 AM",
-  "tide": [
-    {"label":"উচ্চ জোয়ার","time":"05:45 AM"},
-    {"label":"উচ্চ জোয়ার","time":"06:12 PM"},
-    {"label":"নিম্ন ভাটা","time":"12:01 PM"},
-    {"label":"নিম্ন ভাটা","time":"11:30 PM"}
-  ],
+  "tithi": "-",
+  "nakshatra": "-",
+  "sunrise": "06:00",
+  "sunset": "17:00",
+  "moonrise": "14:00",
+  "moonset": "02:00",
+  "tide": [],
   "ekadashi": {
     "name": "রমা একাদশী",
     "date": "2025-11-15",
     "days_left": 12
   },
-  "events": [
-    {"name": "গীতা জয়ন্তী", "date": "2025-12-05", "days_left": 31}
-  ],
-  "updated": "2025-11-04T00:00:00Z"
+  "updated": "2025-11-03T00:00:00Z"
 }
