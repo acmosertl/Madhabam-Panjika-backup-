@@ -113,38 +113,55 @@ body{margin:0;background:var(--bg);font-family:"Noto Sans Bengali",system-ui,san
 
 </div>
 
-<!-- ✅ Panchika Auto-Engine -->
 <script>
-async function autoRefreshPanchika() {
-  try {
+async function autoRefreshPanchika(){
+  try{
     const res = await fetch('https://madhabam-panjika.vercel.app/api/update');
     const data = await res.json();
+    if(!data.ok || !data.data){ console.warn("No data"); return; }
 
-    if (data.ok && data.data) {
-      const p = data.data;
-      const s = (sel,v)=>{const el=document.querySelector(sel);if(el)el.textContent=v||'—';};
+    const p = data.data;
+    const set = (id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val||'—';};
 
-      s('.tithi',p.tithi);
-      s('.nakshatra',p.nakshatra);
-      s('.sunrise',p.sunrise);
-      s('.sunset',p.sunset);
-      s('.moonrise',p.moonrise);
-      s('.moonset',p.moonset);
+    // 🔹 পঞ্জিকা
+    set('tithi', p.tithi);
+    set('nakshatra', p.nakshatra);
+    set('sunrise', p.sunrise);
+    set('sunset', p.sunset);
+    set('moonrise', p.moonrise);
+    set('moonset', p.moonset);
 
-      if(p.ekadashi){
-        s('.ekadashi-name',p.ekadashi.name);
-        s('.ekadashi-date',p.ekadashi.date);
-        s('.ekadashi-days',`${p.ekadashi.days_left} দিন বাকি`);
-      }
-
-      console.log('✅ Panchika updated',p);
+    // 🔹 একাদশী
+    if(p.ekadashi){
+      set('ekaName', p.ekadashi.name);
+      set('ekaDate', p.ekadashi.date);
+      set('ekaLeft', `${p.ekadashi.days_left} দিন বাকি`);
+      set('ekaParana', p.ekadashi.parana || '—');
     }
-  } catch (err) {
-    console.error('Panchika update failed:', err);
+
+    // 🔹 আসন্ন উৎসব (যদি থাকে)
+    if(p.events && p.events.length){
+      set('festName', p.events[0].name);
+      set('festDate', `${p.events[0].date} • ${p.events[0].days_left} দিন পরে`);
+    }
+
+    // 🔹 জোয়ার-ভাটা (যদি থাকে)
+    if(p.tide && p.tide.length>=4){
+      set('tj1', p.tide[0].time);
+      set('tj2', p.tide[1].time);
+      set('tv1', p.tide[2].time);
+      set('tv2', p.tide[3].time);
+    }
+
+    console.log("✅ Panchika auto-updated:", p);
   }
+  catch(err){ console.error("❌ Panchika update failed:", err); }
 }
 
+// প্রথমবার লোডের সময় কল
 autoRefreshPanchika();
+
+// প্রতি ৩ ঘন্টা অন্তর অটো-রিফ্রেশ
 setInterval(autoRefreshPanchika,10800000);
 </script>
 </body>
