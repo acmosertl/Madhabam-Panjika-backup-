@@ -1,14 +1,17 @@
 {
   "version": 3,
+  "buildCommand": "",
+  "outputDirectory": "",
+  "framework": null,
   "functions": {
-    "api/panchika.js": {
+    "api/*.js": {
       "runtime": "nodejs20.x"
     }
   },
   "routes": [
     {
-      "src": "/api/panchika",
-      "dest": "api/panchika.js"
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
     }
   ]
 }
