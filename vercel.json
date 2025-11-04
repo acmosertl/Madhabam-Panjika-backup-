@@ -1,9 +1,15 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/panchika.js", "use": "@vercel/node" }
+    {
+      "src": "api/panchika.js",
+      "use": "@vercel/node"
+    }
   ],
   "routes": [
-    { "src": "/api/panchika", "dest": "/api/panchika.js" }
+    {
+      "src": "/api/panchika",
+      "dest": "/api/panchika.js"
+    }
   ]
 }
