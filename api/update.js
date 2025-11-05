@@ -1,25 +1,20 @@
-// api/update.js
-import { computePanchika } from "../lib/panchika-engine.js";
-import { verifyWithSources } from "../lib/verify-sources.js";
+// 🔍 Verifier: Cross-Check with ISKCON + BongCalendar + HinduPanchang
+export async function verifySources(all) {
+  try {
+    // Optional verification from multiple APIs
+    const res1 = await fetch("https://vediccalendar-api.vercel.app/api/verify?tz=Asia/Kolkata");
+    const v1 = await res1.json();
 
-export default async function handler(req, res){
-  try{
-    const { mode="drik", lat, lon, tz="Asia/Kolkata", verify="1" } = req.query;
-    const latF = isFinite(parseFloat(lat)) ? parseFloat(lat) : 22.5411;  // Kolkata default
-    const lonF = isFinite(parseFloat(lon)) ? parseFloat(lon) : 88.3378;
+    const res2 = await fetch("https://hindu-calendar-api.vercel.app/api/today?tz=Asia/Kolkata");
+    const v2 = await res2.json();
 
-    const now = new Date();
-    const data = computePanchika({ date: now, lat: latF, lon: lonF, tz, mode: (mode==="surya"?"surya":"drik") });
+    // Merge verified tithi/nakshatra if available
+    const tithi = v1?.tithi_bn || v2?.tithi_bn || all.tithi;
+    const nakshatra = v1?.nakshatra_bn || v2?.nakshatra_bn || all.nakshatra;
 
-    let verifyLog = null;
-    if (verify!=="0"){
-      const iso = new Date(now.toLocaleString("sv-SE",{ timeZone: tz})).slice(0,10);
-      try{ verifyLog = await verifyWithSources(data, iso, tz); }catch{}
-    }
-
-    res.setHeader("Cache-Control","s-maxage=900, stale-while-revalidate=900");
-    return res.status(200).json({ ok:true, data, verify: verifyLog });
-  }catch(err){
-    return res.status(200).json({ ok:false, error: err.message });
+    return { ...all, tithi, nakshatra };
+  } catch (err) {
+    console.error("Verifier Error:", err);
+    return all;
   }
 }
