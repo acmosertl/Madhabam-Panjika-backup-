@@ -137,81 +137,47 @@ body{margin:0;background:var(--bg);font-family:"Noto Sans Bengali",system-ui,san
 </div>
 
 <script>
-async function loadPanchika() {
-  try {
-    const res = await fetch('/api/panchika');
-    const j = await res.json();
-    if (!j.ok) return;
-    const d = j.data;
+(async function(){
+  try{
+    const url = '/api/update?mode=drik&tz=Asia/Kolkata'; // চাইলে mode=surya টেস্ট কর
+    const r = await fetch(url + '&_=' + Date.now());
+    const { ok, data } = await r.json();
+    if(!ok || !data) return;
 
-    // 🌞 Panchika Basics
-    set("tithi", d.tithi);
-    set("paksha", d.paksha);
-    set("nakshatra", d.nakshatra);
-    set("sunrise", d.sunrise);
-    set("sunset", d.sunset);
-    set("moonrise", d.moonrise);
-    set("moonset", d.moonset);
+    const S = (id,v)=>{ const el=document.getElementById(id); if(el) el.textContent = v ?? '—'; };
 
-    // 🌼 Ekadashi
-    if (d.ekadashi) {
-      set("ekaName", d.ekadashi.name);
-      set("ekaDate", formatDate(d.ekadashi.date));
-      set("ekaLeft", `${d.ekadashi.days_left} দিন বাকি`);
+    // পঞ্জিকা
+    S('tithi', data.tithi);
+    S('tithiNext', data.tithi_next);
+    S('tithiEnds', data.tithi_ends_at);
+    S('paksha', data.paksha);
+    S('nakshatra', data.nakshatra);
+    S('nNext', data.nakshatra_next);
+    S('nEnd', data.nakshatra_ends_at);
+    S('sunrise', data.sunrise);
+    S('sunset', data.sunset);
+    S('moonrise', data.moonrise);
+    S('moonset', data.moonset);
+
+    // একাদশী + পারণ (আজ একাদশী হলে today:true)
+    if (data.paran){
+      const p = data.paran;
+      S('ekaParana', `পারণ: ${p.paran_date}, ${p.paran_start} – ${p.paran_end}`);
     }
 
-    // 📣 Upcoming Event
-    if (d.events && d.events.length) {
-      set("festName", d.events[0].name);
-      set("festDate", `${formatDate(d.events[0].date)} • ${d.events[0].days_left} দিন পরে`);
+    // Tide (high1, high2, low1, low2)
+    if (data.tide){
+      const t = data.tide;
+      if (t.high) { S('tj1', t.high[0]); S('tj2', t.high[1]); }
+      if (t.low)  { S('tv1', t.low[0]);  S('tv2', t.low[1]);  }
+      // Kolkata label/clock তুমি আগেই দিয়েছ — 그대로 থাকবে
     }
+  }catch(e){ console.error(e); }
+})();
 
-    // 🌊 Tide
-    const tide = d.tide || [];
-    if (tide[0]) {
-      set("tj1", tide[0].high1);
-      set("tj2", tide[0].high2);
-    }
-    if (tide[1]) {
-      set("tv1", tide[1].low1);
-      set("tv2", tide[1].low2);
-    }
-
-    // 🕒 Local Time (Kolkata)
-    updateTime();
-    setInterval(updateTime, 1000);
-
-  } catch (err) {
-    console.error("Panchika Engine Error:", err);
-  }
-}
-
-function set(id, val) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = val || "—";
-}
-
-function formatDate(str) {
-  const d = new Date(str + "T00:00:00");
-  return d.toLocaleDateString("bn-BD", { day: "2-digit", month: "short", year: "numeric" });
-}
-
-function updateTime() {
-  const now = new Date();
-  const time = now.toLocaleTimeString("en-US", {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true
-  });
-  document.querySelectorAll('.kTime').forEach(e => e.textContent = time);
-}
-
-// 🚀 Initial load + Auto refresh every 3 hours
-loadPanchika();
-setInterval(loadPanchika, 10800000);
+// প্রতি ৩ ঘন্টা অন্তর রিফ্রেশ
+setInterval(()=>location.reload(), 10800000);
 </script>
-      
-  
+
 </body>
 </html>
