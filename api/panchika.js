@@ -1,34 +1,34 @@
 export default async function handler(req, res) {
   try {
-    const lat = 22.5411; // 🌍 Kolkata coordinates
+    const lat = 22.5411;
     const lon = 88.3378;
-    const today = new Date().toISOString().split("T")[0];
+    const tz = "Asia/Kolkata";
 
-    // 🌅 Fetch sunrise/sunset with fallback
-    const astroUrl = `https://api.sunrisesunset.io/json?lat=${lat}&lng=${lon}&timezone=Asia/Kolkata`;
+    // ☀️ Sunrise/sunset/moonrise/moonset
+    const astroUrl = `https://api.sunrisesunset.io/json?lat=${lat}&lng=${lon}&timezone=${tz}`;
     let astro = {};
     try {
       const r = await fetch(astroUrl);
       const j = await r.json();
       astro = j.results || {};
     } catch {
-      astro = { sunrise: "6:00 AM", sunset: "5:00 PM", moonrise: "2:00 PM", moonset: "2:00 AM" };
+      astro = { sunrise: "06:00 AM", sunset: "05:00 PM", moonrise: "02:00 PM", moonset: "02:00 AM" };
     }
 
-    // 🔹 Panchika core data
+    // 🔹 Panchika test data with sub-times
     const data = {
-      tithi: "ত্রয়োদশী",
+      tithi: "ত্রয়োদশী",
       tithiEnds: "১১:৪৫ PM",
       tithiNext: "চতুর্দশী",
       nakshatra: "অশ্বিনী",
       nEnd: "০৮:৩০ AM",
       nNext: "ভরণী",
       paksha: "কৃষ্ণ পক্ষ",
-      sunrise: astro.sunrise || "6:00 AM",
-      sunset: astro.sunset || "5:00 PM",
-      moonrise: astro.moonrise || "2:00 PM",
-      moonset: astro.moonset || "2:00 AM",
-      ekadashi: { name: "রমা একাদশী", date: "2025-11-15", days_left: 11 },
+      sunrise: astro.sunrise,
+      sunset: astro.sunset,
+      moonrise: astro.moonrise,
+      moonset: astro.moonset,
+      ekadashi: { name: "উত্পন্না একাদশী", date: "2025-12-11", days_left: 36, parana: "দ্বাদশীতে সকাল ৭-৯ মধ্যে" },
       events: [{ name: "গীতা জয়ন্তী", date: "2025-12-05", days_left: 31 }],
       tide: [
         { high1: "12:20 PM", high2: "06:40 PM" },
