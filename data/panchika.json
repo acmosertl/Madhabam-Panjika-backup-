@@ -1,5 +1,5 @@
 {
-  "tithi": "ত্রয়োদশী",
+  "tithi": "ত্রয়োদশী",
   "tithiEnds": "১১:৪৫ PM",
   "tithiNext": "চতুর্দশী",
   "nakshatra": "অশ্বিনী",
@@ -10,17 +10,11 @@
   "sunset": "05:00 PM",
   "moonrise": "02:00 PM",
   "moonset": "02:00 AM",
-  "ekadashi": {
-    "name": "রমা একাদশী",
-    "date": "2025-11-15",
-    "days_left": 11
-  },
-  "events": [
-    { "name": "গীতা জয়ন্তী", "date": "2025-12-05", "days_left": 31 }
-  ],
+  "ekadashi": { "name": "উত্পন্না একাদশী", "date": "2025-12-11", "days_left": 36, "parana": "দ্বাদশীতে সকাল ৭-৯ মধ্যে" },
+  "events": [{ "name": "গীতা জয়ন্তী", "date": "2025-12-05", "days_left": 31 }],
   "tide": [
     { "high1": "12:20 PM", "high2": "06:40 PM" },
     { "low1": "12:28 AM", "low2": "12:48 PM" }
   ],
-  "updated": "2025-11-04T19:40:26.249Z"
+  "updated": "2025-11-05T08:00:00.000Z"
 }
