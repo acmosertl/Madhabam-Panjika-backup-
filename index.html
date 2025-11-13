@@ -17,16 +17,66 @@ html,body{margin:0;background:var(--bg);font-family:"Noto Sans Bengali",system-u
 .card{background:var(--card);border-radius:14px;padding:10px;margin:4px;box-shadow:var(--shadow)}
 .titleMain{font-weight:900;font-size:26px;text-align:center;margin:8px 2px 6px}
 
-/* টগল স্লাইডার */
-.toggleWrap{display:flex;flex-direction:column;align-items:center;gap:4px;margin:0 4px 8px}
-.toggleBar{position:relative;display:flex;align-items:center;justify-content:space-between;
-  background:#f8eed0;border:1px solid #e6d9a0;border-radius:999px;padding:6px;width:100%;}
-.toggleBar .seg{flex:1;text-align:center;font-weight:800;font-size:13px;color:#6a5617}
-.knob{position:absolute;top:3px;bottom:3px;width:50%;border-radius:999px;
-  background:linear-gradient(180deg,#ff9e80,#ff7043);transition:transform .25s ease;
-  box-shadow:0 2px 6px rgba(0,0,0,.15);opacity:0.95}
-.knob.right{transform:translateX(100%);}
-.toggleHint{font-size:12px;color:#6a5617;font-weight:700}
+/* 🔸 Updated Toggle — under-slider indicator style */
+.toggleWrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  margin:0 4px 8px;
+}
+.toggleBar{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#f8eed0;
+  border:1px solid #e6d9a0;
+  border-radius:999px;
+  padding:6px;
+  width:100%;
+  overflow:hidden;
+}
+.toggleBar .seg{
+  flex:1;
+  text-align:center;
+  font-weight:800;
+  font-size:13px;
+  color:#6a5617;
+  position:relative;
+  z-index:2;
+}
+.knob{
+  position:absolute;
+  top:55%;
+  left:3px;
+  width:50%;
+  height:70%;
+  border-radius:999px;
+  background:linear-gradient(180deg,#ffb46e,#ff7043);
+  box-shadow:inset 0 0 4px rgba(0,0,0,.2), 0 1px 4px rgba(0,0,0,.25);
+  transition:transform .3s ease;
+  transform:translateY(-50%);
+  opacity:0.45;
+  z-index:1; /* এখন ব্যাকগ্রাউন্ডে থাকবে */
+}
+.knob.right{
+  transform:translate(100%,-50%);
+}
+.toggleHint{
+  font-size:12px;
+  color:#6a5617;
+  font-weight:700;
+  text-align:center;
+}
+.modeFlag{
+  font-size:12px;
+  color:#7a5200;
+  font-weight:800;
+  margin-top:4px;
+  text-align:center;
+}
+  
 /* ছোট মোড ট্যাগ (টগলের নিচে) */
 .modeFlag{font-size:12px;color:#7a5200;font-weight:800;margin-top:4px;text-align:center}
 
@@ -130,36 +180,27 @@ function solarRiseSetUTC_raw(J0,lat,lon,h0){ let rise=null,setv=null;
   } return { riseUTC: rise, setUTC: setv };
 }
 
-/* Improved lunar rise/set raw with engine param and higher scanning density */
-function lunarRiseSetUTC_raw(J0,lat,lon,h0,engine){ let rise=null,setv=null;
-  // scan at 96 subdivisions (15-min) for better detection
-  const steps = 96;
+function lunarRiseSetUTC_raw(J0,lat,lon,h0,engine){
+  let rise=null,setv=null;
+  const steps = 192; // finer scan every 7.5 min
   for(let k=0;k<steps;k++){
     const a=J0+k/steps, b=J0+(k+1)/steps;
     const La=eclToEq(correctedMoonLong(a,engine),a), Lb=eclToEq(correctedMoonLong(b,engine),b);
     const Ha=((lstDeg(a,lon)/15 - La.ra)*15 + 540)%360 - 180;
     const Hb=((lstDeg(b,lon)/15 - Lb.ra)*15 + 540)%360 - 180;
     const Aa=altDeg(La.dec,Ha,lat)-h0, Ab=altDeg(Lb.dec,Hb,lat)-h0;
-    if(Aa<0 && Ab>0 && rise===null){
-      let lo=a,hi=b;
-      for(let i=0;i<25;i++){
-        const m=(lo+hi)/2; const L=eclToEq(correctedMoonLong(m,engine),m);
-        const H=((lstDeg(m,lon)/15 - L.ra)*15 + 540)%360 - 180; const A=altDeg(L.dec,H,lat)-h0;
-        if(A<0) lo=m; else hi=m;
-      }
-      rise=((lo+hi)/2 - J0)*24;
-    }
-    if(Aa>0 && Ab<0 && setv===null){
-      let lo=a,hi=b;
-      for(let i=0;i<25;i++){
-        const m=(lo+hi)/2; const L=eclToEq(correctedMoonLong(m,engine),m);
-        const H=((lstDeg(m,lon)/15 - L.ra)*15 + 540)%360 - 180; const A=altDeg(L.dec,H,lat)-h0;
-        if(A>0) lo=m; else hi=m;
-      }
-      setv=((lo+hi)/2 - J0)*24;
-    }
+    if(Aa<0 && Ab>0 && !rise){let lo=a,hi=b;for(let i=0;i<25;i++){
+      const m=(lo+hi)/2;const L=eclToEq(correctedMoonLong(m,engine),m);
+      const H=((lstDeg(m,lon)/15-L.ra)*15+540)%360-180;
+      const A=altDeg(L.dec,H,lat)-h0;if(A<0)lo=m;else hi=m;}
+      rise=((lo+hi)/2-J0)*24;}
+    if(Aa>0 && Ab<0 && !setv){let lo=a,hi=b;for(let i=0;i<25;i++){
+      const m=(lo+hi)/2;const L=eclToEq(correctedMoonLong(m,engine),m);
+      const H=((lstDeg(m,lon)/15-L.ra)*15+540)%360-180;
+      const A=altDeg(L.dec,H,lat)-h0;if(A>0)lo=m;else hi=m;}
+      setv=((lo+hi)/2-J0)*24;}
   }
-  return { riseUTC: rise, setUTC: setv };
+  return {riseUTC:rise,setUTC:setv};
 }
 
 /* wrappers with fine offset tuning */
@@ -176,7 +217,9 @@ function solarRiseSetUTC(J0,lat,lon,h0,mode){
 function lunarRiseSetUTC(J0,lat,lon,h0,mode){
   const raw = lunarRiseSetUTC_raw(J0,lat,lon,h0,mode);
   const off = riseSetFineOffset(lat,mode)/60;
-  return { riseUTC: raw.riseUTC!=null ? raw.riseUTC+off : null, setUTC: raw.setUTC!=null ? raw.setUTC+off : null };
+  return { riseUTC: raw.riseUTC!=null ? raw.ris
+    
+    eUTC+off : null, setUTC: raw.setUTC!=null ? raw.setUTC+off : null };
 }
 
 /* Tithi / Nakshatra */
@@ -271,6 +314,21 @@ async function getAccurateMoonTimes(lat,lon,dateStr,J0UTC,tz,engine){
   const Y = now.getFullYear(), M = now.getMonth()+1, D = now.getDate();
   const J0UTC = JD(Y,M,D,0);
 
+// ===== সূর্যোদয় ও মূল্যায়ন সময় (JEval Fix) =====
+  const sParam = MODE_PARAMS[MODE];
+  const sUTC0 = solarRiseSetUTC(J0UTC, lat, lon, sParam.sun_h0, MODE);
+  const srLocalHour0 = (sUTC0 && sUTC0.riseUTC != null) ? (sUTC0.riseUTC + tz) : 6;
+
+  // বর্তমান স্থানীয় সময় ঘন্টা হিসেবে
+  const localHr = now.getHours() + now.getMinutes()/60 + now.getSeconds()/3600;
+
+  // কোন দিনটা চলছে (সূর্যোদয় আগে নাকি পরে নির্ভর করে)
+  const JdayUTC = (localHr < srLocalHour0) ? (J0UTC - 1) : J0UTC;
+
+  // রিয়েল-টাইম জুলিয়ান ইভ্যালুয়েশন (সঠিক রিফ্রেশের জন্য)
+  const fractionalDayUTC = (localHr - tz) / 24;
+  const JEval = JdayUTC + fractionalDayUTC;
+  
   // choose mode params
   const sParam = MODE_PARAMS[MODE];
 
