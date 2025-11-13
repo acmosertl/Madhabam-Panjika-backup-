@@ -104,6 +104,41 @@
   .timeVal{font-size:20px}
   .knob{width:46%}
 }
+
+/* BLOGGER SIDEBAR SAFE PATCH */
+@media all {
+
+  .pakshaBox, .pill {
+    background:#FFECB3 !important;     /* warm soft yellow */
+    width: 100% !important;
+    max-width: 260px !important;        /* Blogger sidebar width fix */
+    margin: 0 auto !important;
+    padding:10px 12px !important;
+    border-radius:24px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:10px !important;
+    box-sizing:border-box !important;
+  }
+
+  .paksha {
+    font-size:22px !important;
+    font-weight:900 !important;
+    white-space:nowrap !important;      /* Prevent wrapping */
+    color:#1a1a1a !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:8px !important;
+  }
+
+  .paksha .emojiBox span {
+    font-size:28px !important;
+    line-height:1 !important;
+  }
+
+}
+  
 </style>
 
 <!-- PART B: JavaScript (paste after Part A) -->
