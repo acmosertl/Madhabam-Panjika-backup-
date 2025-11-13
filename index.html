@@ -42,33 +42,47 @@
 .valueLarge{font-weight:900;font-size:28px;color:var(--ink);margin-bottom:6px}
 .subline{font-size:14px;color:#222}
 
-/* PAKSHA BADGE FIX — blogger sidebar safe */
+/* SAFE PAKSHA BADGE — Blogger sidebar compatible */
 .paksha{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  padding:6px 12px;
-  background:#ffe7a1;
-  border-radius:999px;
+  display:block;
+  width:100%;
+  text-align:center;
+  background:#f9d784;
+  padding:10px 6px;
+  border-radius:14px;
   font-weight:800;
-  font-size:15px;
-  max-width:100%;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  box-sizing:border-box;
+  font-size:16px;
+  color:#2d1a00;
+  margin-bottom:8px;
+
+  /* Prevent emoji clipping in Blogger */
+  line-height:1.4;
+  overflow:visible;
 }
 
-.paksha .emoji{
-  font-size:18px;
-  line-height:1;
+.paksha .row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+
+.paksha .emojiBox{
+  width:26px;
+  height:26px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
 }
 
 .paksha .label{
+  background:#ffe9a8;
+  padding:2px 12px;
+  border-radius:20px;
   font-size:14px;
-  font-weight:700;
-  color:#444;
+  font-weight:800;
+  color:#3a2a00;
 }
 
   
@@ -426,15 +440,18 @@
 
         <div class="pill">
           <span class="paksha">
-  <span class="emoji">${tNow.paksha === "শুক্লপক্ষ" ? "🌑" : "🌕"}</span>
-  <span class="arrow"> → </span>
-  <span class="emoji">${tNow.paksha === "শুক্লপক্ষ" ? "🌕" : "🌑"}</span>
-  <span class="label"> (${tNow.paksha})</span>
+  <div class="row">
+    <span class="emojiBox">${tNow.paksha==="শুক্লপক্ষ"?"🌑":"🌕"}</span>
+    <span>→</span>
+    <span class="emojiBox">${tNow.paksha==="শুক্লপক্ষ"?"🌕":"🌑"}</span>
+  </div>
+  <div class="label">${tNow.paksha}</div>
 </span>
           <div class="labelLarge">তিথি</div>
           <div class="valueLarge">${tithiName(tNow.num)}</div>
           <div class="subline"><b>শেষ:</b> ${fmtDayTime(new Date(), tEndLocal)} · <b>পরবর্তী:</b> <span style="font-weight:900;color:#0b66c2">${tNext}</span></div>
         </div>
+
 
         <div class="pill">
           <div class="labelLarge">নক্ষত্র</div>
